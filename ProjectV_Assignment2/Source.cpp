@@ -11,52 +11,64 @@ Main Source File
 #include <vector>
 #include <string>
 
+// local path to the student data file 
 #define STUDENT_NAME_FILE "C:\\Users\\Ryan\\Desktop\\Conestoga\\Year 3\\Project V\\Assignment 2\\StudentData.txt"
 
-using namespace std; 
+using namespace std;
 
-struct STUDENT_DATA 
+struct STUDENT_DATA
 {
-	string firstName; 
-	string lastName; 
+    string firstName;
+    string lastName;
 };
 
-int main()
+// function to process the students and add them from the txt file to a vector 
+vector<STUDENT_DATA> processStudents() 
 {
-	ifstream inputFile(STUDENT_NAME_FILE); 
-	if (!inputFile)
-	{
-		cout << "Error reading file, unable to open!" << endl; 
-		return -1; 
-	}
+    vector<STUDENT_DATA> students; // vector to store students 
 
-	vector<STUDENT_DATA> students; 
-	string line; 
+    // open file, print error message if unable to 
+    ifstream inputFile(STUDENT_NAME_FILE);
+    if (!inputFile)
+    {
+        cout << "Error reading file, unable to open!" << endl;
+        return students; // return empty vector
+    }
 
-	while (getline(inputFile, line))
-	{
-		istringstream iss(line); 
-		string firstName, lastName; 
-		string space; // get rid of the space in the name 
+    string line; // used to store one line of data from file 
 
-		if (getline(iss, lastName, ',') && getline (iss, space, ' ') && getline(iss, firstName))
-		{
-			STUDENT_DATA student; 
-			student.firstName = firstName; 
-			student.lastName = lastName; 
-			students.push_back(student); 
-		}
-	}
+    while (getline(inputFile, line))
+    {
+        istringstream iss(line);
+        string firstName, lastName;
+        string space; // get rid of the space in the name 
 
-	inputFile.close(); 
+        // assign first and last names and push it back to the vector 
+        if (getline(iss, lastName, ',') && getline(iss, space, ' ') && getline(iss, firstName))
+        {
+            STUDENT_DATA student;
+            student.firstName = firstName;
+            student.lastName = lastName;
+            students.push_back(student);
+        }
+    }
 
-	cout << "[Last Name, First Name]\n" << endl; 
+    inputFile.close();
+    return students; // return the vector of students
+}
 
-	for (STUDENT_DATA& student : students)
-	{
-		std::cout << student.lastName << ", " << student.firstName << std::endl;
-	}
+int main() {
+    vector<STUDENT_DATA> students = processStudents(); // call the function to process students
 
-	return 1; 
+// print out the names only if in debug mode 
+#ifdef _DEBUG
+    cout << "[Last Name, First Name]\n" << endl;
 
+    for (const STUDENT_DATA& student : students)
+    {
+        std::cout << student.lastName << ", " << student.firstName << std::endl;
+    }
+#endif
+
+    return 1;
 }
